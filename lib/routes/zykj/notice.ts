@@ -4,7 +4,7 @@ import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
 import { DEPARTMENTS } from './config';
-import { parseList, type DepartmentConfig } from './utils';
+import { parseList, ZYKJ_TIMEOUT } from './utils';
 
 export const route: Route = {
     path: '/notice/:department',
@@ -88,14 +88,14 @@ async function handler(ctx) {
         throw new Error(`Invalid department: ${department}. Supported: ${Object.keys(DEPARTMENTS).join(', ')}`);
     }
 
-    const { data: response } = await got(config.url);
+    const { data: response } = await got(config.url, ZYKJ_TIMEOUT);
     const items = parseList(response, config).slice(0, limit);
 
     const details = await Promise.all(
         items.map((item) =>
             cache.tryGet(item.link!, async () => {
                 try {
-                    const { data: detailResponse } = await got(item.link!);
+                    const { data: detailResponse } = await got(item.link!, ZYKJ_TIMEOUT);
                     const $ = load(detailResponse);
 
                     // Parse detail based on detailParser type

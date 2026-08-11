@@ -4,6 +4,12 @@ import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
+// Create a got instance with extended timeout for zykj.edu.cn (China-based servers)
+export const gotExtended = got.extend({ timeout: { connect: 30000, response: 60000 } });
+
+/** Timeout options for got calls to zykj.edu.cn */
+export const ZYKJ_TIMEOUT = { timeout: { connect: 30000, response: 60000 } };
+
 // ===== Types =====
 
 export type ListParserType = 'vsb_cover' | 'vsb_label' | 'vsb_zsjz' | 'vsb_wslb' | 'vsb_textlist' | 'vsb_textlist_hr' | 'vsb_textlist_xgc' | 'vsb_listitem' | 'p8cm_infolist' | 'goworkla';
@@ -515,7 +521,7 @@ function parseGoworklaDetail($: ReturnType<typeof load>): Partial<DataItem> {
 export async function parseDetail(item: DataItem, config: DepartmentConfig): Promise<DataItem> {
     return cache.tryGet(item.link!, async () => {
         try {
-            const { data: response } = await got(item.link!);
+            const { data: response } = await got(item.link!, ZYKJ_TIMEOUT);
             const $ = load(response);
 
             let detail: Partial<DataItem>;
@@ -539,7 +545,7 @@ export async function parseDetail(item: DataItem, config: DepartmentConfig): Pro
 // ===== Fetch Helper =====
 
 export async function fetchList(config: DepartmentConfig, limit?: number): Promise<DataItem[]> {
-    const { data: response } = await got(config.url);
+    const { data: response } = await gotExtended(config.url, { timeout: { connect: 30000, response: 60000 } });
     let items = parseList(response, config);
     if (limit) {
         items = items.slice(0, limit);

@@ -4,7 +4,7 @@ import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
 import { MAIN_NEWS_CATEGORIES, NEWS_COLLECTION_KEYS } from './config';
-import { parseList, type DepartmentConfig } from './utils';
+import { parseList, ZYKJ_TIMEOUT } from './utils';
 
 export const route: Route = {
     path: '/collection/news',
@@ -48,7 +48,7 @@ async function handler(ctx) {
                 detailParser: 'vsb',
             };
             try {
-                const { data: response } = await got(config.url);
+                const { data: response } = await got(config.url, ZYKJ_TIMEOUT);
                 return parseList(response, config).map((item) => ({
                     ...item,
                     _category: cat.name,
@@ -77,7 +77,7 @@ async function handler(ctx) {
         topItems.map((item) =>
             cache.tryGet(item.link!, async () => {
                 try {
-                    const { data: detailResponse } = await got(item.link!);
+                    const { data: detailResponse } = await got(item.link!, ZYKJ_TIMEOUT);
                     const $ = load(detailResponse);
 
                     const title = $('h1.news_det_l_title').text().trim() || item.title;

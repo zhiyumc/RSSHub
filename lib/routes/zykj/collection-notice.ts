@@ -4,7 +4,7 @@ import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
 import { MAIN_NEWS_CATEGORIES, DEPARTMENTS, NOTICE_COLLECTION_KEYS } from './config';
-import { parseList, type DepartmentConfig } from './utils';
+import { parseList, ZYKJ_TIMEOUT } from './utils';
 
 export const route: Route = {
     path: '/collection/notice',
@@ -54,7 +54,7 @@ async function handler(ctx) {
             }
 
             try {
-                const { data: response } = await got(config.url);
+                const { data: response } = await got(config.url, ZYKJ_TIMEOUT);
                 return parseList(response, config).map((item) => ({
                     ...item,
                     _source: config.name,
@@ -92,7 +92,7 @@ async function handler(ctx) {
                 }
 
                 try {
-                    const { data: detailResponse } = await got(item.link!);
+                    const { data: detailResponse } = await got(item.link!, ZYKJ_TIMEOUT);
                     const $ = load(detailResponse);
 
                     if (detailParser === 'goworkla') {
