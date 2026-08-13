@@ -1,6 +1,7 @@
 {
     "$schema": "https://openapi.vercel.sh/vercel.json",
     "framework": "hono",
+    "regions": ["hkg1"],
     "outputDirectory": "src",
     "rewrites": [
         {
