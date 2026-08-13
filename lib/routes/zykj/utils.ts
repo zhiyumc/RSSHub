@@ -4,11 +4,10 @@ import cache from '@/utils/cache';
 import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 
-// Create a got instance with extended timeout for zykj.edu.cn (China-based servers)
-export const gotExtended = got.extend({ timeout: { connect: 30000, response: 60000 } });
-
-/** Timeout options for got calls to zykj.edu.cn */
-export const ZYKJ_TIMEOUT = { timeout: { connect: 30000, response: 60000 } };
+// The RSSHub "got" compatibility layer is backed by ofetch, which accepts a numeric timeout.
+// Bound each upstream list request so Vercel can return a partial collection instead of timing out.
+export const ZYKJ_TIMEOUT = { timeout: 4000, retry: 0 };
+export const gotExtended = got.extend(ZYKJ_TIMEOUT);
 
 // ===== Types =====
 
@@ -545,7 +544,7 @@ export async function parseDetail(item: DataItem, config: DepartmentConfig): Pro
 // ===== Fetch Helper =====
 
 export async function fetchList(config: DepartmentConfig, limit?: number): Promise<DataItem[]> {
-    const { data: response } = await gotExtended(config.url, { timeout: { connect: 30000, response: 60000 } });
+    const { data: response } = await gotExtended(config.url);
     let items = parseList(response, config);
     if (limit) {
         items = items.slice(0, limit);

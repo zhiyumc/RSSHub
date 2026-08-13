@@ -4,7 +4,7 @@ import got from '@/utils/got';
 import { parseDate } from '@/utils/parse-date';
 import { load } from 'cheerio';
 import { MAIN_NEWS_CATEGORIES } from './config';
-import { parseList, ZYKJ_TIMEOUT } from './utils';
+import { parseList, ZYKJ_TIMEOUT, type DepartmentConfig } from './utils';
 
 export const route: Route = {
     path: '/news/:category?',

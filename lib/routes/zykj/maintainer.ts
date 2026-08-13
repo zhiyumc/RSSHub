@@ -1,6 +1,4 @@
-import type { Maintainer } from '@/types';
-
-export const maintainers: Maintainer = {
+export const maintainers = {
     '/news/:category': ['ChengMingXuan'],
     '/tzgg': ['ChengMingXuan'],
     '/notice/:department': ['ChengMingXuan'],
